@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:karcisin_app/bloc/auth/auth_bloc.dart'; 
 import 'package:karcisin_app/bloc/event/event_bloc.dart';
 import 'package:karcisin_app/bloc/event/event_event.dart';
-import 'package:karcisin_app/repositories/event_repositories.dart';
+import 'package:karcisin_app/repositories/event_repository.dart';
+import 'package:karcisin_app/screens/main_nav.dart';
 import 'package:karcisin_app/screens/splash_screen.dart';
+import 'package:karcisin_app/screens/auth/login_screen.dart';
+
+import 'package:karcisin_app/screens/auth/register_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,16 +19,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Membungkus dengan RepositoryProvider agar Repository bisa diakses global
     return RepositoryProvider(
       create: (context) => EventRepository(),
       child: MultiBlocProvider(
-        // 2. Membungkus dengan MultiBlocProvider (antisipasi jika nanti tambah AuthBloc, dll)
         providers: [
+          // 2. DAFTARKAN AUTHBLOC DI SINI
+          BlocProvider(
+            create: (context) => AuthBloc(),
+          ),
+          // EventBloc biarkan seperti semula
           BlocProvider(
             create: (context) => EventBloc(
               eventRepository: RepositoryProvider.of<EventRepository>(context),
-            )..add(FetchEvents()), // Langsung memicu pengambilan data saat start
+            )..add(FetchEvents()),
           ),
         ],
         child: MaterialApp(
@@ -33,6 +41,13 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
             useMaterial3: true,
           ),
+          routes: {
+            '/login': (context) => const LoginScreen(),
+            '/register': (context) => const RegisterScreen(),
+            '/user-home': (context) => const MainNav(),
+            '/owner-dashboard': (context) => const Center(child: Text("Halaman Owner")), 
+            '/admin-dashboard': (context) => const Center(child: Text("Halaman Admin")),
+          },
           home: const SplashScreen(),
         ),
       ),
