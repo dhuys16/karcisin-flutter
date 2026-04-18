@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:karcisin_app/utils/date_helper.dart';
 import '../../bloc/event/event_bloc.dart';
 import '../../bloc/event/event_state.dart';
 import '../../widgets/event_card.dart';
@@ -12,6 +13,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<EventBloc>().add(FetchEvents());
     return Scaffold(
       appBar: AppBar(
         title: const Text("Karcis.in"),
@@ -25,6 +27,9 @@ class HomeScreen extends StatelessWidget {
 
           // 2. Kondisi saat Data Berhasil Dimuat
           if (state is EventLoaded) {
+            if (state.events.isEmpty) {
+              return const Center(child: Text("Belum ada Event"));
+            }
             return ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: state.events.length,
@@ -32,7 +37,7 @@ class HomeScreen extends StatelessWidget {
                 final event = state.events[index];
                 return EventCard(
                   title: event.title,
-                  date: event.startDate.toString(), // Nanti bisa diformat pake intl
+                  date: event.startDate.toFullEventDate(),
                   imageUrl: event.image,
                   onTap: () {
                     // Navigasi ke Detail Event (shared folder)
@@ -50,6 +55,7 @@ class HomeScreen extends StatelessWidget {
                 context.read<EventBloc>().add(FetchEvents());
               },
             );
+            // print("Error: ${state.message}");
           }
 
           return const Center(child: Text("Tidak ada data."));
@@ -58,3 +64,5 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+

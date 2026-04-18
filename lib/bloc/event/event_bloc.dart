@@ -14,7 +14,8 @@ class EventBloc extends Bloc<EventEvent, EventState> {
         final events = await eventRepository.getEvents();
         emit(EventLoaded(events));
       } catch (e) {
-        emit(EventError("Gagal mengambil data event: ${e.toString()}"));
+        print("DEBUG EVENT ERROR: $e"); 
+        emit(EventError("Gagal mengambil data dari server: $e"));
       }
     });
   }

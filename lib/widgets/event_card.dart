@@ -39,7 +39,7 @@ class EventCard extends StatelessWidget {
                 children: [
                   Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   const SizedBox(height: 4),
-                  Text(date, style: const TextStyle(color: Colors.grey)),
+                  Text(date.toString(), style: const TextStyle(color: Colors.grey)),
                 ],
               ),
             ),
