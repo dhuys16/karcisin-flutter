@@ -7,7 +7,8 @@ class AuthLoading extends AuthState {}
 class Authenticated extends AuthState {
   final String role; // 'admin', 'owner', atau 'user'
   final String token;
-  Authenticated({required this.role, required this.token});
+  final String? name;
+  Authenticated({required this.role, required this.token, this.name});
 }
 
 class Unauthenticated extends AuthState {}
