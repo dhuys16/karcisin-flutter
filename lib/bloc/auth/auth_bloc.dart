@@ -1,75 +1,135 @@
-import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
-import '../../shared/config.dart';
+import '../../repositories/auth_repository.dart';
 
+/// {@template auth_bloc}
+/// BLoC yang mengelola seluruh state autentikasi aplikasi.
+///
+/// Menerima [AuthEvent] dan menghasilkan [AuthState] sesuai
+/// hasil operasi dari [AuthRepository].
+///
+/// ### Event yang didukung:
+/// - [LoginSubmitted]    → proses login
+/// - [RegisterSubmitted] → proses register
+/// - [LogoutRequested]   → proses logout (hapus sesi lokal)
+///
+/// ### State yang mungkin dihasilkan:
+/// - [AuthLoading]       → sedang memproses request
+/// - [Authenticated]     → login berhasil, menyimpan role & token
+/// - [Unauthenticated]   → belum login / setelah logout / setelah register
+/// - [AuthActionSuccess] → operasi berhasil dengan pesan info (misal: register sukses)
+/// - [AuthError]         → terjadi kegagalan, menyimpan pesan error
+/// {@endtemplate}
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc() : super(AuthInitial()) {
-    on<LoginSubmitted>((event, emit) async {
-      emit(AuthLoading());
-      try {
-        final response = await http.post(
-          Uri.parse("${Config.baseUrl}/login"),
-          // Tambahkan header ini wajib!
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          // Encode body jadi JSON string
-          body: jsonEncode({
-            'email': event.email.trim(),
-            'password': event.password.trim(),
-          }),
-        );
+  /// Repository yang digunakan untuk semua operasi autentikasi.
+  final AuthRepository _authRepository;
 
-        if (response.statusCode == 200) {
-          // print(response.body);
-          final responseData = json.decode(response.body);
+  /// {@macro auth_bloc}
+  ///
+  /// [authRepository] bersifat opsional; jika tidak diberikan, akan
+  /// membuat instance [AuthRepository] baru secara otomatis.
+  AuthBloc({AuthRepository? authRepository})
+    : _authRepository = authRepository ?? AuthRepository(),
+      super(AuthInitial()) {
+    on<LoginSubmitted>(_onLoginSubmitted);
+    on<RegisterSubmitted>(_onRegisterSubmitted);
+    on<LogoutRequested>(_onLogoutRequested);
+  }
 
-          // Perhatikan akses key 'data' dulu baru isinya
-          final String token = responseData['data']['token'];
-          final String role = responseData['data']['user']['role'];
+  // ---------------------------------------------------------------------------
+  // Handler: Login
+  // ---------------------------------------------------------------------------
 
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('auth_token', token);
+  /// Menangani event [LoginSubmitted].
+  ///
+  /// Alur:
+  /// 1. Emit [AuthLoading]
+  /// 2. Panggil [AuthRepository.login]
+  /// 3. Jika berhasil → simpan token ke SharedPreferences → emit [Authenticated]
+  /// 4. Jika gagal     → emit [AuthError] dengan pesan dari [AuthException]
+  Future<void> _onLoginSubmitted(
+    LoginSubmitted event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      final result = await _authRepository.login(
+        email: event.email,
+        password: event.password,
+      );
 
-          emit(Authenticated(role: role, token: token));
-        } else if  (response.statusCode == 401) {
-          emit(AuthError("Email atau password salah"));
-          print(response.body);
-        } else {
-          print("Status Code Nyasar: ${response.statusCode}");
-          print("Isi Error Server: ${response.body}");
-          emit(AuthError("Gagal login: ${response.statusCode}"));
-        }
-      } catch (e) {
-        emit(AuthError("Koneksi ke server bermasalah (${e.toString()})"));
-      }
-    });
+      // Simpan token secara persisten agar sesi tetap aktif setelah restart
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_token', result.token);
 
-    on<LogoutRequested>((event, emit) {
-      // Hapus token dan kembali ke Unauthenticated
+      emit(Authenticated(role: result.user.role, token: result.token));
+    } on AuthException catch (e) {
+      emit(AuthError(e.message));
+    } catch (e) {
+      emit(AuthError('Terjadi kesalahan tidak terduga.'));
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Handler: Register
+  // ---------------------------------------------------------------------------
+
+  /// Menangani event [RegisterSubmitted].
+  ///
+  /// Alur:
+  /// 1. Emit [AuthLoading]
+  /// 2. Panggil [AuthRepository.register] dengan data dari event
+  /// 3. Jika berhasil → emit [AuthActionSuccess] (dengan pesan sukses)
+  ///                  → emit [Unauthenticated] agar UI kembali ke halaman login
+  /// 4. Jika gagal    → emit [AuthError] dengan pesan dari [AuthException]
+  ///
+  /// Catatan: setelah register berhasil kamu **tidak** langsung login otomatis.
+  /// Pengguna diarahkan kembali ke halaman login untuk masuk secara manual.
+  /// Jika ingin auto-login, simpan token hasil register ke SharedPreferences
+  /// dan emit [Authenticated] langsung.
+  Future<void> _onRegisterSubmitted(
+    RegisterSubmitted event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      // Delegasikan ke repository; validasi input dilakukan di dalam repository
+      await _authRepository.register(
+        name: event.name,
+        email: event.email,
+        password: event.password,
+        role: event.role,
+      );
+
+      // Beri tahu UI bahwa registrasi berhasil
+      emit(AuthActionSuccess('Akun berhasil dibuat! Silakan login.'));
+
+      // Kembalikan ke state unauthenticated agar layar login ditampilkan
       emit(Unauthenticated());
-    });
+    } on AuthException catch (e) {
+      // Pesan error sudah user-friendly dari AuthRepository
+      emit(AuthError(e.message));
+    } catch (e) {
+      emit(AuthError('Terjadi kesalahan tidak terduga.'));
+    }
+  }
 
-    // Tambahkan di bawah logika on<LoginSubmitted>...
+  // ---------------------------------------------------------------------------
+  // Handler: Logout
+  // ---------------------------------------------------------------------------
 
-    on<RegisterSubmitted>((event, emit) async {
-      emit(AuthLoading());
-      try {
-        // Simulasi request API ke endpoint /register Laravel
-        // Nanti kamu bisa panggil http.post ke Config.baseUrl + "/register"
-        await Future.delayed(const Duration(seconds: 2));
-
-        // Jika sukses, kembalikan pesan berhasil
-        emit(AuthActionSuccess("Akun berhasil dibuat! Silakan login."));
-        emit(Unauthenticated()); // Kembalikan form ke posisi semula
-      } catch (e) {
-        emit(AuthError("Gagal mendaftar: ${e.toString()}"));
-      }
-    });
+  /// Menangani event [LogoutRequested].
+  ///
+  /// Menghapus token dari SharedPreferences dan mengembalikan state
+  /// ke [Unauthenticated].
+  Future<void> _onLogoutRequested(
+    LogoutRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token');
+    emit(Unauthenticated());
   }
 }
