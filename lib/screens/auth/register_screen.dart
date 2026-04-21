@@ -16,6 +16,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   String _selectedRole = 'user';
   bool _obscurePassword = true;
@@ -24,6 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -138,6 +140,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
+                _buildLabel('NOMOR HP'),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  style: GoogleFonts.outfit(color: AppTheme.textPrimary),
+                  decoration: InputDecoration(
+                    hintText: '081234567890',
+                    prefixIcon: const Icon(
+                      Icons.phone_outlined,
+                      color: AppTheme.textMuted,
+                      size: 20,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
                 _buildLabel('PASSWORD'),
                 const SizedBox(height: 8),
                 TextField(
@@ -215,6 +233,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             RegisterSubmitted(
                               name: _nameController.text,
                               email: _emailController.text,
+                              phone: _phoneController.text,
                               password: _passwordController.text,
                               role: _selectedRole,
                             ),
