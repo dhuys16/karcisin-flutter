@@ -9,7 +9,7 @@ import '../../bloc/event/event_state.dart';
 import '../../models/event_model.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({Key? key}) : super(key: key);
+  const SearchScreen({super.key});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();

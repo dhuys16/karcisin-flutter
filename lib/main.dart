@@ -3,14 +3,18 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:karcisin_app/bloc/auth/auth_bloc.dart';
+import 'package:karcisin_app/bloc/category/category_bloc.dart';
+import 'package:karcisin_app/bloc/category/category_event.dart';
 import 'package:karcisin_app/bloc/event/event_bloc.dart';
 import 'package:karcisin_app/bloc/event/event_event.dart';
+import 'package:karcisin_app/repositories/category_repository.dart';
 import 'package:karcisin_app/repositories/event_repository.dart';
 import 'package:karcisin_app/screens/main_nav.dart';
 import 'package:karcisin_app/screens/splash_screen.dart';
 import 'package:karcisin_app/screens/auth/login_screen.dart';
 import 'package:karcisin_app/screens/auth/register_screen.dart';
 import 'package:karcisin_app/shared/app_theme.dart';
+import 'package:karcisin_app/screens/admin/dashboad_screen.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -22,8 +26,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => EventRepository(),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(create: (context) => EventRepository()),
+        RepositoryProvider(create: (context) => CategoryRepository()),
+      ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => AuthBloc()),
@@ -31,6 +38,11 @@ class MyApp extends StatelessWidget {
             create: (context) => EventBloc(
               eventRepository: RepositoryProvider.of<EventRepository>(context),
             )..add(FetchEvents()),
+          ),
+          BlocProvider(
+            create: (context) => CategoryBloc(
+              repository: RepositoryProvider.of<CategoryRepository>(context),
+            )..add(FetchCategories()),
           ),
         ],
         child: MaterialApp(
@@ -43,10 +55,9 @@ class MyApp extends StatelessWidget {
             '/user-home': (context) => const MainNav(),
             '/owner-dashboard': (context) =>
                 const Center(child: Text("Halaman Owner")),
-            '/admin-dashboard': (context) =>
-                const Center(child: Text("Halaman Admin")),
+            '/admin-dashboard': (context) => const AdminDashboardScreen(),
           },
-          home: const SplashScreen(),
+          home: const AdminDashboardScreen(),
         ),
       ),
     );

@@ -273,7 +273,7 @@ class HomeScreen extends StatelessWidget {
         else
           ...todayEvents
               .map((e) => _HappeningCard(event: e as EventModel))
-              .toList(),
+              ,
       ],
     );
   }

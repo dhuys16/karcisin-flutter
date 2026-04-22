@@ -9,7 +9,7 @@ import '../../bloc/event/event_state.dart';
 import '../../models/event_model.dart';
 
 class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({Key? key}) : super(key: key);
+  const HistoryScreen({super.key});
 
   @override
   State<HistoryScreen> createState() => _HistoryScreenState();
@@ -292,7 +292,7 @@ class _TicketCard extends StatelessWidget {
                   topLeft: Radius.circular(12),
                   bottomLeft: Radius.circular(12),
                 ),
-                color: Color(0xFFDDD),
+                color: Color(0x000ffddd),
               ),
               clipBehavior: Clip.antiAlias,
               child: CachedNetworkImage(

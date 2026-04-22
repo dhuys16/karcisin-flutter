@@ -27,11 +27,9 @@ class AppTheme {
         primary: accentRed,
         secondary: accentRed,
         surface: surface,
-        background: background,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
         onSurface: textPrimary,
-        onBackground: textPrimary,
       ),
       textTheme: GoogleFonts.outfitTextTheme(
         const TextTheme(
