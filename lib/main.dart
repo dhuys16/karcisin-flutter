@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
                 const Center(child: Text("Halaman Owner")),
             '/admin-dashboard': (context) => const AdminDashboardScreen(),
           },
-          home: const AdminDashboardScreen(),
+          home: const SplashScreen(),
         ),
       ),
     );
