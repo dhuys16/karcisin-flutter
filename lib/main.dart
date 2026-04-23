@@ -19,13 +19,10 @@ import 'package:karcisin_app/screens/auth/login_screen.dart';
 import 'package:karcisin_app/screens/auth/register_screen.dart';
 import 'package:karcisin_app/shared/app_theme.dart';
 import 'package:karcisin_app/screens/admin/dashboad_screen.dart';
-<<<<<<< HEAD
 import 'package:karcisin_app/repositories/user_repository.dart';
 import 'package:karcisin_app/bloc/user/user_bloc.dart';
 import 'package:karcisin_app/bloc/user/user_event.dart';
-=======
 import 'package:shared_preferences/shared_preferences.dart';
->>>>>>> 5e7e9815de5a404aea0949f613d876541adb9bbd
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Tambahkan baris ini juga
@@ -64,15 +61,14 @@ class MyApp extends StatelessWidget {
             )..add(FetchCategories()),
           ),
           BlocProvider(
-<<<<<<< HEAD
-            create: (context) => UserBloc(
-              repository: RepositoryProvider.of<UserRepository>(context),
-            )..add(FetchAllUsers()), 
-=======
             create: (context) =>
                 ProfileBloc(RepositoryProvider.of<ProfileRepository>(context))
                   ..add(ProfileFetched()),
->>>>>>> 5e7e9815de5a404aea0949f613d876541adb9bbd
+          ),
+          BlocProvider(
+            create: (context) => UserBloc(
+              repository: RepositoryProvider.of<UserRepository>(context),
+            )..add(FetchAllUsers()), 
           ),
         ],
         child: MaterialApp(

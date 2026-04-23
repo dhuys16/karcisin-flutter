@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:karcisin_app/shared/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:karcisin_app/models/user_model.dart';
+import 'package:karcisin_app/models/response/user_response.dart';
 
 class ProfileRepository {
-  Future<UserModel> getProfile() async {
+  Future<UserResponse> getProfile() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
     final userId = prefs.getInt('user_id');
@@ -36,13 +36,13 @@ class ProfileRepository {
       // Jika server kirim List (seperti di log kamu), ambil index pertama
       if (rawData is List) {
         if (rawData.isNotEmpty) {
-          return UserModel.fromJson(rawData[0]);
+          return UserResponse.fromJson(rawData[0]);
         }
         throw Exception('Daftar user kosong');
       }
 
       // Jika server kirim objek tunggal, langsung parsing
-      return UserModel.fromJson(rawData);
+      return UserResponse.fromJson(rawData);
     } else {
       // Tambahkan detail status code biar debug di Fedora-mu lebih enak
       throw Exception('Gagal ambil data user (Status: ${response.statusCode})');
