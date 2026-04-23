@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:karcisin_app/shared/app_theme.dart';
-import '../../../bloc/auth/auth_bloc.dart';
-import '../../../bloc/auth/auth_state.dart';
+import '../../../bloc/profile/profile_bloc.dart';
+import '../../../bloc/profile/profile_state.dart';
+import '../../../bloc/profile/profile_event.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -13,16 +14,63 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppTheme.background,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildTopBar(context),
-              _buildAvatar(),
-              _buildStats(),
-              _buildMenu(context),
-              const SizedBox(height: 40),
-            ],
-          ),
+        child: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            if (state is ProfileLoading) {
+              return const Center(
+                child: CircularProgressIndicator(color: AppTheme.accentRed),
+              );
+            }
+
+            if (state is ProfileError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: AppTheme.accentRed,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      state.message,
+                      style: GoogleFonts.outfit(color: AppTheme.textPrimary),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<ProfileBloc>().add(ProfileFetched());
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.accentRed,
+                      ),
+                      child: const Text('Coba Lagi'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<ProfileBloc>().add(ProfileFetched());
+              },
+              color: AppTheme.accentRed,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    _buildTopBar(context),
+                    _buildAvatar(state),
+                    _buildStats(),
+                    _buildMenu(context),
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -63,7 +111,19 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar() {
+  Widget _buildAvatar(ProfileState state) {
+    String displayName = 'Pengguna';
+    String displayRole = 'USER';
+    String? displayEmail;
+    String? displayPhone;
+
+    if (state is ProfileLoaded) {
+      displayName = state.name;
+      displayRole = state.role.toUpperCase();
+      displayEmail = state.email;
+      displayPhone = state.phone;
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32),
       child: Column(
@@ -83,38 +143,79 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              final String displayName = (state is Authenticated)
-                  ? (state.name ?? 'Pengguna')
-                  : 'Pengguna';
-              final String displayRole = (state is Authenticated)
-                  ? state.role.toUpperCase()
-                  : 'USER';
-              return Column(
-                children: [
-                  Text(
-                    displayName,
-                    style: GoogleFonts.outfit(
-                      color: AppTheme.textPrimary,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    displayRole,
-                    style: GoogleFonts.outfit(
-                      color: AppTheme.accentRed,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                ],
-              );
-            },
+          Text(
+            displayName,
+            style: GoogleFonts.outfit(
+              color: AppTheme.textPrimary,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+            ),
           ),
+          const SizedBox(height: 4),
+          Text(
+            displayRole,
+            style: GoogleFonts.outfit(
+              color: AppTheme.accentRed,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 2,
+            ),
+          ),
+          if (displayEmail != null || displayPhone != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppTheme.surface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppTheme.divider, width: 0.5),
+              ),
+              child: Column(
+                children: [
+                  if (displayEmail != null)
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.email_outlined,
+                          size: 14,
+                          color: AppTheme.textMuted,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          displayEmail,
+                          style: GoogleFonts.outfit(
+                            color: AppTheme.textSecondary,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (displayEmail != null && displayPhone != null)
+                    const SizedBox(height: 4),
+                  if (displayPhone != null)
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.phone_outlined,
+                          size: 14,
+                          color: AppTheme.textMuted,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          displayPhone,
+                          style: GoogleFonts.outfit(
+                            color: AppTheme.textSecondary,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );

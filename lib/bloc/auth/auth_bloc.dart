@@ -36,6 +36,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoginSubmitted>(_onLoginSubmitted);
     on<RegisterSubmitted>(_onRegisterSubmitted);
     on<LogoutRequested>(_onLogoutRequested);
+    on<AppStarted>(_onAppStarted);
+  }
+
+  Future<void> _onAppStarted(
+    AppStarted event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      if (token == null) {
+        emit(Unauthenticated());
+      } else {
+        emit(Authenticated(role: 'user', token: token));
+      }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -63,6 +82,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // Simpan token secara persisten agar sesi tetap aktif setelah restart
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('auth_token', result.token);
+      await prefs.setInt('user_id', result.user.id);
 
       emit(Authenticated(role: result.user.role, token: result.token));
     } on AuthException catch (e) {
