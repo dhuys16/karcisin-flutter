@@ -16,12 +16,14 @@ class UserModel {
 
   /// Peran pengguna: `'user'` (pengunjung) atau `'owner'` (penyelenggara).
   final String role;
+  final String phone;
 
   /// {@macro user_model}
   const UserModel({
     required this.id,
     required this.name,
     required this.email,
+    required this.phone,
     required this.role,
   });
 
@@ -41,17 +43,18 @@ class UserModel {
       id: json['id'] as int,
       name: json['name'] as String,
       email: json['email'] as String,
+      phone: json['phone'] as String,
       role: json['role'] as String,
     );
   }
 
   /// Mengkonversi instance ini menjadi [Map] untuk keperluan serialisasi.
   Map<String, dynamic> toJson() {
-    return {'id': id, 'name': name, 'email': email, 'role': role};
+    return {'id': id, 'name': name, 'email': email, 'phone': phone, 'role': role};
   }
 
   @override
   String toString() {
-    return 'UserModel(id: $id, name: $name, email: $email, role: $role)';
+    return 'UserModel(id: $id, name: $name, email: $email, phone: $phone, role: $role)';
   }
 }

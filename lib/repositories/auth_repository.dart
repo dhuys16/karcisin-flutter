@@ -3,48 +3,19 @@ import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
 import '../shared/config.dart';
 
-// ---------------------------------------------------------------------------
-// Custom Exception
-// ---------------------------------------------------------------------------
-
-/// {@template auth_exception}
-/// Exception khusus yang dilempar oleh [AuthRepository] ketika terjadi
-/// kegagalan autentikasi atau registrasi.
-///
-/// Mengandung [message] yang siap ditampilkan ke pengguna dan [statusCode]
-/// opsional untuk keperluan debugging.
-/// {@endtemplate}
 class AuthException implements Exception {
-  /// Pesan error yang dapat ditampilkan langsung ke pengguna.
   final String message;
-
-  /// HTTP status code dari response server (opsional).
   final int? statusCode;
-
-  /// {@macro auth_exception}
   const AuthException(this.message, {this.statusCode});
 
   @override
   String toString() => 'AuthException($statusCode): $message';
 }
 
-// ---------------------------------------------------------------------------
-// Response DTO
-// ---------------------------------------------------------------------------
-
-/// {@template register_result}
-/// Objek hasil dari proses registrasi yang berhasil.
-///
-/// Berisi [user] (data pengguna baru) dan [token] (Bearer token untuk sesi).
-/// {@endtemplate}
 class RegisterResult {
-  /// Data pengguna yang baru saja dibuat.
   final UserModel user;
-
-  /// Bearer token yang dapat digunakan untuk request selanjutnya.
   final String token;
 
-  /// {@macro register_result}
   const RegisterResult({required this.user, required this.token});
 }
 
@@ -101,6 +72,7 @@ class AuthRepository {
   /// {
   ///   "name": "...",
   ///   "email": "...",
+  ///   "phone": "...",
   ///   "password": "...",
   ///   "role": "user" | "owner"
   /// }
@@ -127,10 +99,16 @@ class AuthRepository {
     required String name,
     required String email,
     required String password,
+    required String phone,
     required String role,
   }) async {
     // Validasi sisi klien sebelum mengirim request
-    _validateRegisterInput(name: name, email: email, password: password);
+    _validateRegisterInput(
+      name: name,
+      email: email,
+      password: password,
+      phone: phone,
+    );
 
     try {
       final response = await _client.post(
@@ -142,6 +120,7 @@ class AuthRepository {
           'name': name.trim(),
           'email': email.trim().toLowerCase(),
           'password': password,
+          'phone': phone.trim(),
           'role': role,
         }),
       );
@@ -260,6 +239,7 @@ class AuthRepository {
     required String name,
     required String email,
     required String password,
+    required String phone,
   }) {
     if (name.trim().isEmpty) {
       throw const AuthException('Nama lengkap tidak boleh kosong.');
@@ -271,6 +251,9 @@ class AuthRepository {
     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
     if (!emailRegex.hasMatch(email.trim())) {
       throw const AuthException('Format email tidak valid.');
+    }
+    if (phone.trim().isEmpty) {
+      throw const AuthException('Nomor HP tidak boleh kosong.');
     }
     if (password.isEmpty) {
       throw const AuthException('Password tidak boleh kosong.');
