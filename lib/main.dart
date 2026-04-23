@@ -3,20 +3,32 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:karcisin_app/bloc/auth/auth_bloc.dart';
+import 'package:karcisin_app/bloc/auth/auth_event.dart';
 import 'package:karcisin_app/bloc/category/category_bloc.dart';
 import 'package:karcisin_app/bloc/category/category_event.dart';
 import 'package:karcisin_app/bloc/event/event_bloc.dart';
 import 'package:karcisin_app/bloc/event/event_event.dart';
 import 'package:karcisin_app/repositories/category_repository.dart';
 import 'package:karcisin_app/repositories/event_repository.dart';
+import 'package:karcisin_app/bloc/profile/profile_bloc.dart';
+import 'package:karcisin_app/bloc/profile/profile_event.dart';
+import 'package:karcisin_app/repositories/profile_repository.dart';
 import 'package:karcisin_app/screens/main_nav.dart';
 import 'package:karcisin_app/screens/splash_screen.dart';
 import 'package:karcisin_app/screens/auth/login_screen.dart';
 import 'package:karcisin_app/screens/auth/register_screen.dart';
 import 'package:karcisin_app/shared/app_theme.dart';
 import 'package:karcisin_app/screens/admin/dashboad_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Tambahkan baris ini juga
+  
+  // --- KODE LOGOUT PAKSA ---
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.clear(); 
+  print("Data SharedPreferences berhasil dihapus paksa!");
+  // -------------------------
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
@@ -30,10 +42,11 @@ class MyApp extends StatelessWidget {
       providers: [
         RepositoryProvider(create: (context) => EventRepository()),
         RepositoryProvider(create: (context) => CategoryRepository()),
+        RepositoryProvider(create: (context) => ProfileRepository()),
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (context) => AuthBloc()),
+          BlocProvider(create: (context) => AuthBloc()..add(AppStarted())),
           BlocProvider(
             create: (context) => EventBloc(
               eventRepository: RepositoryProvider.of<EventRepository>(context),
@@ -43,6 +56,11 @@ class MyApp extends StatelessWidget {
             create: (context) => CategoryBloc(
               repository: RepositoryProvider.of<CategoryRepository>(context),
             )..add(FetchCategories()),
+          ),
+          BlocProvider(
+            create: (context) =>
+                ProfileBloc(RepositoryProvider.of<ProfileRepository>(context))
+                  ..add(ProfileFetched()),
           ),
         ],
         child: MaterialApp(

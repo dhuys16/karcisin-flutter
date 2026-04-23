@@ -17,6 +17,7 @@ class UserModel {
   /// Peran pengguna: `'user'` (pengunjung) atau `'owner'` (penyelenggara).
   final String role;
   final String phone;
+  final String? image;
 
   /// {@macro user_model}
   const UserModel({
@@ -25,6 +26,7 @@ class UserModel {
     required this.email,
     required this.phone,
     required this.role,
+    this.image,
   });
 
   /// Membuat instance [UserModel] dari sebuah [Map] (hasil decode JSON).
@@ -40,21 +42,29 @@ class UserModel {
   /// ```
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      email: json['email'] as String,
-      phone: json['phone'] as String,
-      role: json['role'] as String,
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      phone: json['phone'] ?? '',
+      role: json['role'] ?? '',
+      image: json['image'] ?? '',
     );
   }
 
   /// Mengkonversi instance ini menjadi [Map] untuk keperluan serialisasi.
   Map<String, dynamic> toJson() {
-    return {'id': id, 'name': name, 'email': email, 'phone': phone, 'role': role};
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'role': role,
+      'image': image,
+    };
   }
 
   @override
   String toString() {
-    return 'UserModel(id: $id, name: $name, email: $email, phone: $phone, role: $role)';
+    return 'UserModel(id: $id, name: $name, email: $email, phone: $phone, role: $role, image: $image)';
   }
 }
