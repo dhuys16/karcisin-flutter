@@ -15,6 +15,9 @@ import 'package:karcisin_app/screens/auth/login_screen.dart';
 import 'package:karcisin_app/screens/auth/register_screen.dart';
 import 'package:karcisin_app/shared/app_theme.dart';
 import 'package:karcisin_app/screens/admin/dashboad_screen.dart';
+import 'package:karcisin_app/repositories/user_repository.dart';
+import 'package:karcisin_app/bloc/user/user_bloc.dart';
+import 'package:karcisin_app/bloc/user/user_event.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -43,6 +46,11 @@ class MyApp extends StatelessWidget {
             create: (context) => CategoryBloc(
               repository: RepositoryProvider.of<CategoryRepository>(context),
             )..add(FetchCategories()),
+          ),
+          BlocProvider(
+            create: (context) => UserBloc(
+              repository: RepositoryProvider.of<UserRepository>(context),
+            )..add(FetchAllUsers()), 
           ),
         ],
         child: MaterialApp(

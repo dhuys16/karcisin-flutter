@@ -1,4 +1,4 @@
-import '../../models/event_model.dart';
+import '../../models/response/event_response.dart';
 
 abstract class EventState {}
 
@@ -7,7 +7,7 @@ class EventInitial extends EventState {}
 class EventLoading extends EventState {}
 
 class EventLoaded extends EventState {
-  final List<EventModel> events;
+  final List<EventResponse> events;
   EventLoaded(this.events);
 }
 

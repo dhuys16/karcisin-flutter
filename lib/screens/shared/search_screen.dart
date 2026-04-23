@@ -6,7 +6,7 @@ import 'package:karcisin_app/shared/app_theme.dart';
 import 'package:karcisin_app/utils/date_helper.dart';
 import '../../bloc/event/event_bloc.dart';
 import '../../bloc/event/event_state.dart';
-import '../../models/event_model.dart';
+import '../../models/response/event_response.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -334,7 +334,7 @@ class _SearchScreenState extends State<SearchScreen> {
 }
 
 class _SearchResultCard extends StatelessWidget {
-  final EventModel event;
+  final EventResponse event;
   const _SearchResultCard({required this.event});
 
   String get _categoryLabel {

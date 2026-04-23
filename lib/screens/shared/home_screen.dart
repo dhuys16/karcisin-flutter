@@ -7,7 +7,7 @@ import 'package:karcisin_app/utils/date_helper.dart';
 import '../../bloc/event/event_bloc.dart';
 import '../../bloc/event/event_state.dart';
 import '../../bloc/event/event_event.dart';
-import '../../models/event_model.dart';
+import '../../models/response/event_response.dart';
 import '../../widgets/loading_state_widget.dart';
 import '../../widgets/error_state_widget.dart';
 
@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+Widget build(BuildContext context) {
     context.read<EventBloc>().add(FetchEvents());
     return Scaffold(
       backgroundColor: AppTheme.background,
@@ -32,7 +32,7 @@ class HomeScreen extends StatelessWidget {
               );
             }
 
-            List<EventModel> events = [];
+            List<EventResponse> events = [];
             if (state is EventLoaded) {
               events = state.events;
             }
@@ -205,7 +205,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFeaturedSection(BuildContext context, List<EventModel> events) {
+  Widget _buildFeaturedSection(BuildContext context, List<EventResponse> events) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -243,7 +243,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHappeningToday(BuildContext context, List<EventModel> events) {
+  Widget _buildHappeningToday(BuildContext context, List<EventResponse> events) {
     final todayEvents = events.length > 1
         ? events.skip(1).take(4).toList()
         : [];
@@ -272,7 +272,7 @@ class HomeScreen extends StatelessWidget {
           )
         else
           ...todayEvents
-              .map((e) => _HappeningCard(event: e as EventModel))
+              .map((e) => _HappeningCard(event: e as EventResponse))
               ,
       ],
     );
@@ -280,7 +280,7 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _FeaturedEventCard extends StatelessWidget {
-  final EventModel event;
+  final EventResponse event;
   const _FeaturedEventCard({required this.event});
 
   @override
@@ -439,7 +439,7 @@ class _FeaturedPlaceholder extends StatelessWidget {
 }
 
 class _HappeningCard extends StatelessWidget {
-  final EventModel event;
+  final EventResponse event;
   const _HappeningCard({required this.event});
 
   String get _categoryLabel {

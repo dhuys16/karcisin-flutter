@@ -44,4 +44,20 @@ class CategoryRepository {
       throw Exception("Gagal menambah kategori");
     }
   }
+
+  Future<void> deleteCategory(int id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+
+    final response = await http.delete(
+      Uri.parse('${Config.baseUrl}/categories/$id'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      },
+    );
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception("Gagal menghapus kategori");
+    }
+  }
 }

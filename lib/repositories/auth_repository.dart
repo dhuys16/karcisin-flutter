@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/user_model.dart';
+import '../models/response/user_response.dart';
 import '../shared/config.dart';
 
 class AuthException implements Exception {
@@ -13,7 +13,7 @@ class AuthException implements Exception {
 }
 
 class RegisterResult {
-  final UserModel user;
+  final UserResponse user;
   final String token;
 
   const RegisterResult({required this.user, required this.token});
@@ -133,7 +133,7 @@ class AuthRepository {
         // Sesuaikan key 'data', 'token', 'user' dengan response API kamu
         final data = responseBody['data'] as Map<String, dynamic>;
         final token = data['token'] as String;
-        final user = UserModel.fromJson(data['user'] as Map<String, dynamic>);
+        final user = UserResponse.fromJson(data['user'] as Map<String, dynamic>);
 
         return RegisterResult(user: user, token: token);
       } else if (response.statusCode == 422) {
@@ -208,7 +208,7 @@ class AuthRepository {
       if (response.statusCode == 200) {
         final data = responseBody['data'] as Map<String, dynamic>;
         final token = data['token'] as String;
-        final user = UserModel.fromJson(data['user'] as Map<String, dynamic>);
+        final user = UserResponse.fromJson(data['user'] as Map<String, dynamic>);
         return RegisterResult(user: user, token: token);
       } else if (response.statusCode == 401) {
         throw const AuthException(

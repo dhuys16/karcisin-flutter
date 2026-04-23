@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import 'category_screen.dart';
+import 'user_screen.dart';
+import 'event_screen.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -16,9 +18,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   // Daftar halaman untuk menu navigasi
   final List<Widget> _pages = [
-    const Center(child: Text("Daftar Semua Event")),
-    const CategoryScreen(), // <-- Panggil halaman kategori di sini
-    const Center(child: Text("Daftar Pengguna")),
+    const AdminEventScreen(),
+    const CategoryScreen(), // <--  Panggil halaman kategori di sini
+    const UserScreen(),
   ];
 
   @override

@@ -6,7 +6,7 @@ import 'package:karcisin_app/shared/app_theme.dart';
 import 'package:karcisin_app/utils/date_helper.dart';
 import '../../bloc/event/event_bloc.dart';
 import '../../bloc/event/event_state.dart';
-import '../../models/event_model.dart';
+import '../../models/response/event_response.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -147,7 +147,7 @@ class _HistoryScreenState extends State<HistoryScreen>
   Widget _buildTabContent() {
     return BlocBuilder<EventBloc, EventState>(
       builder: (context, state) {
-        List<EventModel> events = [];
+        List<EventResponse> events = [];
         if (state is EventLoaded) {
           events = state.events;
         }
@@ -163,7 +163,7 @@ class _HistoryScreenState extends State<HistoryScreen>
     );
   }
 
-  Widget _buildEventList(List<EventModel> events) {
+  Widget _buildEventList(List<EventResponse> events) {
     if (events.isEmpty) {
       return Center(
         child: Text(
@@ -238,7 +238,7 @@ class _HistoryScreenState extends State<HistoryScreen>
 }
 
 class _TicketCard extends StatelessWidget {
-  final EventModel event;
+  final EventResponse event;
   const _TicketCard({required this.event});
 
   String get _tagLabel {

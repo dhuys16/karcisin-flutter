@@ -26,5 +26,15 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         emit(CategoryError(e.toString()));
       }
     });
+
+    on<DeleteCategory>((event, emit) async {
+      try {
+        await repository.deleteCategory(event.id);
+        // Setelah sukses menghapus, kita panggil FetchCategories untuk me-refresh list
+        add(FetchCategories()); 
+      } catch (e) {
+        emit(CategoryError(e.toString()));
+      }
+    });
   }
 }

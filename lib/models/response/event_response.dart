@@ -1,4 +1,4 @@
-class EventModel {
+class EventResponse {
   final int id;
   final String title;
   final String slug;
@@ -13,8 +13,11 @@ class EventModel {
   final String image;
   final int? categoryId;
   final int userId;
+  
+  // Tambahan untuk UI Admin
+  final String ownerName; 
 
-  EventModel({
+  EventResponse({
     required this.id,
     required this.title,
     required this.slug,
@@ -29,9 +32,10 @@ class EventModel {
     required this.image,
     this.categoryId,
     required this.userId,
+    required this.ownerName,
   });
 
-  factory EventModel.fromJson(Map<String, dynamic> json) {
+  factory EventResponse.fromJson(Map<String, dynamic> json) {
     // Ambil harga dari tiket pertama kalau ada, kalau nggak ada kasih 0
     List tickets = json['tickets'] ?? [];
     double eventPrice = 0.0;
@@ -40,21 +44,28 @@ class EventModel {
       eventPrice = double.tryParse(tickets[0]['price'].toString()) ?? 0.0;
     }
 
-    return EventModel(
+    // Ambil nama owner jika relasi 'user' dikirim dari Laravel
+    String parsedOwnerName = 'Unknown';
+    if (json['user'] != null && json['user']['name'] != null) {
+      parsedOwnerName = json['user']['name'];
+    }
+
+    return EventResponse(
       id: json['id'],
-      title: json['title'],
-      slug: json['slug'],
-      description: json['description'],
+      title: json['title'] ?? 'Tanpa Judul',
+      slug: json['slug'] ?? '',
+      description: json['description'] ?? 'Tidak ada deskripsi',
       latitude: double.tryParse(json['latitude']?.toString() ?? '0') ?? 0.0,
       longitude: double.tryParse(json['longitude']?.toString() ?? '0') ?? 0.0,
-      location: json['location'],
+      location: json['location'] ?? 'Lokasi belum ditentukan',
       startDate: DateTime.parse(json['start_date']),
       endDate: DateTime.parse(json['end_date']),
       price: eventPrice, // Gunakan harga yang diambil dari tickets
-      status: json['status'],
-      image: json['image'],
+      status: json['status'] ?? 'pending',
+      image: json['image'] ?? '',
       categoryId: json['category_id'],
-      userId: json['user_id'],
+      userId: json['user_id'] ?? 0,
+      ownerName: parsedOwnerName, // Masukkan nama owner ke sini
     );
   }
 }
