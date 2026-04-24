@@ -13,9 +13,8 @@ class EventResponse {
   final String image;
   final int? categoryId;
   final int userId;
-  
-  // Tambahan untuk UI Admin
-  final String ownerName; 
+
+  final String ownerName;
 
   EventResponse({
     required this.id,
@@ -36,7 +35,7 @@ class EventResponse {
   });
 
   factory EventResponse.fromJson(Map<String, dynamic> json) {
-    // Ambil harga dari tiket pertama kalau ada, kalau nggak ada kasih 0
+
     List tickets = json['tickets'] ?? [];
     double eventPrice = 0.0;
 
@@ -44,7 +43,6 @@ class EventResponse {
       eventPrice = double.tryParse(tickets[0]['price'].toString()) ?? 0.0;
     }
 
-    // Ambil nama owner jika relasi 'user' dikirim dari Laravel
     String parsedOwnerName = 'Unknown';
     if (json['user'] != null && json['user']['name'] != null) {
       parsedOwnerName = json['user']['name'];
@@ -60,12 +58,12 @@ class EventResponse {
       location: json['location'] ?? 'Lokasi belum ditentukan',
       startDate: DateTime.parse(json['start_date']),
       endDate: DateTime.parse(json['end_date']),
-      price: eventPrice, // Gunakan harga yang diambil dari tickets
+      price: eventPrice,
       status: json['status'] ?? 'pending',
       image: json['image'] ?? '',
       categoryId: json['category_id'],
       userId: json['user_id'] ?? 0,
-      ownerName: parsedOwnerName, // Masukkan nama owner ke sini
+      ownerName: parsedOwnerName,
     );
   }
 }

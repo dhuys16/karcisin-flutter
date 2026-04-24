@@ -27,7 +27,7 @@ class AdminEventScreen extends StatelessWidget {
               itemCount: events.length,
               itemBuilder: (context, index) {
                 final event = events[index];
-                
+
                 return Card(
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -57,7 +57,7 @@ class AdminEventScreen extends StatelessWidget {
                               children: [
                                 OutlinedButton.icon(
                                   onPressed: () {
-                                    // Logika Verifikasi/Approve
+
                                   },
                                   icon: const Icon(Icons.check_circle, color: Colors.green),
                                   label: const Text("Verifikasi", style: TextStyle(color: Colors.green)),
@@ -66,7 +66,7 @@ class AdminEventScreen extends StatelessWidget {
                                 ElevatedButton.icon(
                                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                                   onPressed: () {
-                                    // Logika Hapus Event
+
                                   },
                                   icon: const Icon(Icons.delete, color: Colors.white),
                                   label: const Text("Hapus", style: TextStyle(color: Colors.white)),

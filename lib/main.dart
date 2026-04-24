@@ -25,13 +25,12 @@ import 'package:karcisin_app/bloc/user/user_event.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Tambahkan baris ini juga
-  
-  // --- KODE LOGOUT PAKSA ---
+  WidgetsFlutterBinding.ensureInitialized();
+
   final prefs = await SharedPreferences.getInstance();
-  await prefs.clear(); 
+  await prefs.clear();
   print("Data SharedPreferences berhasil dihapus paksa!");
-  // -------------------------
+
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
@@ -68,7 +67,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => UserBloc(
               repository: RepositoryProvider.of<UserRepository>(context),
-            )..add(FetchAllUsers()), 
+            )..add(FetchAllUsers()),
           ),
         ],
         child: MaterialApp(

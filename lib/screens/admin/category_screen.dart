@@ -12,13 +12,13 @@ class CategoryScreen extends StatefulWidget {
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
-  // Warna utama aplikasi
+
   final Color primaryColor = const Color(0xFF3758F9);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Menggunakan BlocListener untuk menangkap pesan sukses/error
+
       body: BlocListener<CategoryBloc, CategoryState>(
         listener: (context, state) {
           if (state is CategoryActionSuccess) {
@@ -85,7 +85,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
-  // Dialog Konfirmasi Hapus
   void _confirmDelete(BuildContext context, int id, String name) {
     showDialog(
       context: context,
@@ -110,7 +109,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
-  // Dialog Tambah Kategori
   void _showAddCategoryDialog(BuildContext context) {
     final controller = TextEditingController();
     showDialog(

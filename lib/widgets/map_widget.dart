@@ -10,7 +10,7 @@ class MapWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlutterMap(
       options: const MapOptions(
-        initialCenter: LatLng(-6.5971, 106.8060), // Koordinat Bogor default
+        initialCenter: LatLng(-6.5971, 106.8060),
         initialZoom: 13.0,
       ),
       children: [

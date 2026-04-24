@@ -20,8 +20,8 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     on<AddCategory>((event, emit) async {
       try {
         await repository.addCategory(event.name);
-        // Setelah sukses nambah, kita ambil ulang data terbarunya
-        add(FetchCategories()); 
+
+        add(FetchCategories());
       } catch (e) {
         emit(CategoryError(e.toString()));
       }
@@ -30,8 +30,8 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     on<DeleteCategory>((event, emit) async {
       try {
         await repository.deleteCategory(event.id);
-        // Setelah sukses menghapus, kita panggil FetchCategories untuk me-refresh list
-        add(FetchCategories()); 
+
+        add(FetchCategories());
       } catch (e) {
         emit(CategoryError(e.toString()));
       }

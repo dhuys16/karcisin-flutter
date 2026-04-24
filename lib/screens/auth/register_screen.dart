@@ -60,7 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 24),
-                // Back button + Logo
+
                 Row(
                   children: [
                     GestureDetector(

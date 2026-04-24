@@ -16,7 +16,7 @@ class EventRepository {
 
     if (response.statusCode == 200) {
       final List data = json.decode(response.body)['data'];
-      // Akan otomatis diproses dengan aman menggunakan logika barumu!
+
       return data.map((json) => EventResponse.fromJson(json)).toList();
     } else {
       throw Exception("Gagal mengambil data dari server");

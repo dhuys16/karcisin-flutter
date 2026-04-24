@@ -10,7 +10,7 @@ class UserRepository {
     final token = prefs.getString('auth_token');
 
     final response = await http.get(
-      Uri.parse('${Config.baseUrl}/users'), // Pastikan backend Laravel punya endpoint ini
+      Uri.parse('${Config.baseUrl}/users'),
       headers: {
         'Authorization': 'Bearer $token',
         'Accept': 'application/json',

@@ -27,8 +27,7 @@ class UserScreen extends StatelessWidget {
               itemCount: users.length,
               itemBuilder: (context, index) {
                 final user = users[index];
-                
-                // Menentukan warna badge berdasarkan role
+
                 Color roleColor = user.role == 'owner' ? Colors.orange : Colors.green;
                 String roleLabel = user.role == 'owner' ? 'Penyelenggara' : 'Pengunjung';
 

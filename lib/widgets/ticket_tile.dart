@@ -14,7 +14,7 @@ class TicketTile extends StatelessWidget {
       subtitle: Text("Status: $status"),
       trailing: const Icon(Icons.chevron_right),
       onTap: () {
-        // Navigasi ke detail tiket (QR Code)
+
       },
     );
   }

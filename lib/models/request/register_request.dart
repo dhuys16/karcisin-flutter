@@ -3,7 +3,7 @@ class RegisterRequest {
   final String email;
   final String phone;
   final String password;
-  final String role; // 'user' atau 'owner'
+  final String role;
 
   RegisterRequest({
     required this.name,

@@ -5,7 +5,7 @@ import '../models/response/category_response.dart';
 import '../shared/config.dart';
 
 class CategoryRepository {
-  // Fungsi untuk mengambil daftar kategori
+
   Future<List<CategoryResponse>> getCategories() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
@@ -26,7 +26,6 @@ class CategoryRepository {
     }
   }
 
-  // Fungsi untuk menambah kategori baru
   Future<void> addCategory(String name) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');

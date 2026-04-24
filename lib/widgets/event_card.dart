@@ -23,7 +23,7 @@ class EventCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Gambar Poster (Placeholder pake Image.network)
+
             Image.network(
               imageUrl,
               height: 150,

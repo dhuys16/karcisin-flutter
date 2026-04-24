@@ -16,10 +16,9 @@ class AdminDashboardScreen extends StatefulWidget {
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   int _selectedIndex = 0;
 
-  // Daftar halaman untuk menu navigasi
   final List<Widget> _pages = [
     const AdminEventScreen(),
-    const CategoryScreen(), // <--  Panggil halaman kategori di sini
+    const CategoryScreen(),
     const UserScreen(),
   ];
 
@@ -34,7 +33,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              // Panggil event logout dari AuthBloc
+
               context.read<AuthBloc>().add(LogoutRequested());
               Navigator.pushReplacementNamed(context, '/login');
             },

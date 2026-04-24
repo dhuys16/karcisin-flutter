@@ -7,14 +7,14 @@ class EventBloc extends Bloc<EventEvent, EventState> {
   final EventRepository eventRepository;
 
   EventBloc({required this.eventRepository}) : super(EventInitial()) {
-    // Menangani aksi FetchEvents
+
     on<FetchEvents>((event, emit) async {
       emit(EventLoading());
       try {
         final events = await eventRepository.getEvents();
         emit(EventLoaded(events));
       } catch (e) {
-        print("DEBUG EVENT ERROR: $e"); 
+        print("DEBUG EVENT ERROR: $e");
         emit(EventError("Gagal mengambil data dari server: $e"));
       }
     });

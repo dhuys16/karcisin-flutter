@@ -8,14 +8,14 @@ class LoginSubmitted extends AuthEvent {
 
 class LogoutRequested extends AuthEvent {}
 
-class AppStarted extends AuthEvent {} // Untuk cek session saat aplikasi dibuka
+class AppStarted extends AuthEvent {}
 
 class RegisterSubmitted extends AuthEvent {
   final String name;
   final String email;
   final String phone;
   final String password;
-  final String role; // 'user' atau 'owner'
+  final String role;
 
   RegisterSubmitted({
     required this.name,
