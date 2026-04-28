@@ -5,10 +5,9 @@ class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
 
 class Authenticated extends AuthState {
-  final String role;
   final String token;
   final String? name;
-  Authenticated({required this.role, required this.token, this.name});
+  Authenticated({required this.token, this.name});
 }
 
 class Unauthenticated extends AuthState {}

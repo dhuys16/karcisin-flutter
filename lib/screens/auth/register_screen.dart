@@ -18,7 +18,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
-  String _selectedRole = 'user';
   bool _obscurePassword = true;
 
   @override
@@ -182,29 +181,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
-                _buildLabel('DAFTAR SEBAGAI'),
-                const SizedBox(height: 8),
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppTheme.surface,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      _RoleChip(
-                        label: 'Pengunjung',
-                        selected: _selectedRole == 'user',
-                        onTap: () => setState(() => _selectedRole = 'user'),
-                      ),
-                      _RoleChip(
-                        label: 'Penyelenggara',
-                        selected: _selectedRole == 'owner',
-                        onTap: () => setState(() => _selectedRole = 'owner'),
-                      ),
-                    ],
-                  ),
-                ),
                 const SizedBox(height: 32),
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
@@ -235,7 +211,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               email: _emailController.text,
                               phone: _phoneController.text,
                               password: _passwordController.text,
-                              role: _selectedRole,
                             ),
                           );
                         },
@@ -299,45 +274,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         fontSize: 10,
         fontWeight: FontWeight.w700,
         letterSpacing: 1.5,
-      ),
-    );
-  }
-}
-
-class _RoleChip extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _RoleChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          margin: const EdgeInsets.all(4),
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: selected ? AppTheme.accentRed : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.outfit(
-              color: selected ? Colors.white : AppTheme.textSecondary,
-              fontSize: 13,
-              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-            ),
-          ),
-        ),
       ),
     );
   }

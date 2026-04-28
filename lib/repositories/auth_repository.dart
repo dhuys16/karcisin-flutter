@@ -35,7 +35,6 @@ class AuthRepository {
     required String email,
     required String password,
     required String phone,
-    required String role,
   }) async {
 
     _validateRegisterInput(
@@ -56,7 +55,6 @@ class AuthRepository {
           'email': email.trim().toLowerCase(),
           'password': password,
           'phone': phone.trim(),
-          'role': role,
         }),
       );
 

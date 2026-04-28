@@ -28,7 +28,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (token == null) {
         emit(Unauthenticated());
       } else {
-        emit(Authenticated(role: 'user', token: token));
+        emit(Authenticated(token: token));
       }
     } catch (e) {
       emit(AuthError(e.toString()));
@@ -50,7 +50,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await prefs.setString('auth_token', result.token);
       await prefs.setInt('user_id', result.user.id);
 
-      emit(Authenticated(role: result.user.role, token: result.token));
+      emit(Authenticated(token: result.token));
     } on AuthException catch (e) {
       emit(AuthError(e.message));
     } catch (e) {
@@ -70,7 +70,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.email,
         password: event.password,
         phone: event.phone,
-        role: event.role,
       );
 
       emit(AuthActionSuccess('Akun berhasil dibuat! Silakan login.'));

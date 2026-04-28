@@ -113,13 +113,11 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildAvatar(ProfileState state) {
     String displayName = 'Pengguna';
-    String displayRole = 'USER';
     String? displayEmail;
     String? displayPhone;
 
     if (state is ProfileLoaded) {
       displayName = state.name;
-      displayRole = state.role.toUpperCase();
       displayEmail = state.email;
       displayPhone = state.phone;
     }
@@ -149,16 +147,6 @@ class ProfileScreen extends StatelessWidget {
               color: AppTheme.textPrimary,
               fontSize: 20,
               fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            displayRole,
-            style: GoogleFonts.outfit(
-              color: AppTheme.accentRed,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 2,
             ),
           ),
           if (displayEmail != null || displayPhone != null) ...[

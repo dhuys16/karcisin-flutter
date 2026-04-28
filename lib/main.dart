@@ -18,10 +18,6 @@ import 'package:karcisin_app/screens/splash_screen.dart';
 import 'package:karcisin_app/screens/auth/login_screen.dart';
 import 'package:karcisin_app/screens/auth/register_screen.dart';
 import 'package:karcisin_app/shared/app_theme.dart';
-import 'package:karcisin_app/screens/admin/dashboad_screen.dart';
-import 'package:karcisin_app/repositories/user_repository.dart';
-import 'package:karcisin_app/bloc/user/user_bloc.dart';
-import 'package:karcisin_app/bloc/user/user_event.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -64,11 +60,6 @@ class MyApp extends StatelessWidget {
                 ProfileBloc(RepositoryProvider.of<ProfileRepository>(context))
                   ..add(ProfileFetched()),
           ),
-          BlocProvider(
-            create: (context) => UserBloc(
-              repository: RepositoryProvider.of<UserRepository>(context),
-            )..add(FetchAllUsers()),
-          ),
         ],
         child: MaterialApp(
           title: 'Karcisin',
@@ -78,9 +69,6 @@ class MyApp extends StatelessWidget {
             '/login': (context) => const LoginScreen(),
             '/register': (context) => const RegisterScreen(),
             '/user-home': (context) => const MainNav(),
-            '/owner-dashboard': (context) =>
-                const Center(child: Text("Halaman Owner")),
-            '/admin-dashboard': (context) => const AdminDashboardScreen(),
           },
           home: const SplashScreen(),
         ),

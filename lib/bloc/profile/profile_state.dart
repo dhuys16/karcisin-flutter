@@ -15,14 +15,12 @@ class ProfileLoaded extends ProfileState {
   final String name;
   final String email;
   final String phone;
-  final String role;
   final String? image;
 
   const ProfileLoaded({
     required this.name,
     required this.email,
     required this.phone,
-    required this.role,
     this.image,
   });
 }
