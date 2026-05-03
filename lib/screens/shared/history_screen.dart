@@ -145,25 +145,30 @@ class _HistoryScreenState extends State<HistoryScreen>
   }
 
   Widget _buildTabContent() {
+    // TODO: Nantinya BlocBuilder ini harus diganti menjadi <BookingBloc, BookingState>
+    // untuk mengambil data spesifik tiket milik user yang login.
     return BlocBuilder<EventBloc, EventState>(
       builder: (context, state) {
-        List<EventResponse> events = [];
-        if (state is EventLoaded) {
-          events = state.events;
-        }
+        // KONDISI SEMENTARA: Kita kosongkan listnya secara default
+        // karena user belum memesan tiket apapun (mensimulasikan data dari Booking API)
+        List<EventResponse> upcomingBookings = [];
+        List<EventResponse> pastBookings = [];
 
         return TabBarView(
           controller: _tabController,
           children: [
-            _buildEventList(events),
-            _buildEventList(events.reversed.toList()),
+            _buildEventList(upcomingBookings, isUpcoming: true),
+            _buildEventList(pastBookings, isUpcoming: false),
           ],
         );
       },
     );
   }
 
-  Widget _buildEventList(List<EventResponse> events) {
+  Widget _buildEventList(
+    List<EventResponse> events, {
+    required bool isUpcoming,
+  }) {
     if (events.isEmpty) {
       return Center(
         child: Text(

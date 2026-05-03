@@ -10,6 +10,7 @@ import '../../bloc/event/event_event.dart';
 import '../../models/response/event_response.dart';
 import '../../widgets/loading_state_widget.dart';
 import '../../widgets/error_state_widget.dart';
+import 'event/event_detail_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -34,22 +35,30 @@ Widget build(BuildContext context) {
 
             List<EventResponse> events = [];
             if (state is EventLoaded) {
-              events = state.events;
+              events = List.from(state.events)..shuffle();
             }
 
-            return CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(child: _buildHeader()),
-                SliverToBoxAdapter(child: _buildSearchBar(context)),
-                SliverToBoxAdapter(child: _buildCategories()),
-                SliverToBoxAdapter(
-                  child: _buildFeaturedSection(context, events),
-                ),
-                SliverToBoxAdapter(
-                  child: _buildHappeningToday(context, events),
-                ),
-                const SliverToBoxAdapter(child: SizedBox(height: 24)),
-              ],
+            return RefreshIndicator(
+              color: AppTheme.accentRed,
+              backgroundColor: AppTheme.surface,
+              onRefresh: () async {
+                context.read<EventBloc>().add(FetchEvents());
+                await Future.delayed(const Duration(milliseconds: 500));
+              },
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(child: _buildHeader()),
+                  SliverToBoxAdapter(child: _buildCategories()),
+                  SliverToBoxAdapter(
+                    child: _buildFeaturedSection(context, events),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _buildHappeningToday(context, events),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                ],
+              ),
             );
           },
         ),
@@ -105,35 +114,7 @@ Widget build(BuildContext context) {
     );
   }
 
-  Widget _buildSearchBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-      child: TextField(
-        readOnly: true,
-        onTap: () {},
-        style: const TextStyle(color: AppTheme.textPrimary),
-        decoration: InputDecoration(
-          hintText: 'Cari event...',
-          hintStyle: const TextStyle(color: AppTheme.textMuted),
-          prefixIcon: const Icon(
-            Icons.search,
-            color: AppTheme.textMuted,
-            size: 20,
-          ),
-          filled: true,
-          fillColor: AppTheme.surface,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: BorderSide.none,
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
-          ),
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildCategories() {
     final categories = [
@@ -288,7 +269,14 @@ class _FeaturedEventCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EventDetailScreen(event: event),
+            ),
+          );
+        },
         child: Container(
           height: 200,
           decoration: BoxDecoration(
@@ -475,7 +463,14 @@ class _HappeningCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EventDetailScreen(event: event),
+          ),
+        );
+      },
       child: Container(
         margin: const EdgeInsets.fromLTRB(20, 0, 20, 12),
         padding: const EdgeInsets.all(12),

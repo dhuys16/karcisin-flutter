@@ -272,14 +272,80 @@ class _SearchScreenState extends State<SearchScreen> {
             );
           }
 
+          // 1. TAMPILAN AWAL (Jika belum mengetik dan filter kategori masih "Semua")
+          if (_query.isEmpty && _selectedCategory == 'Semua') {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.search_rounded,
+                    size: 64,
+                    color: AppTheme.textMuted.withOpacity(0.3),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Ketik nama event atau lokasi\nuntuk mulai mencari',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.outfit(
+                      color: AppTheme.textMuted,
+                      fontSize: 15,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          // 2. LOGIKA FILTER PENCARIAN & KATEGORI
           final filtered = state.events.where((e) {
-            final matchQuery =
-                _query.isEmpty ||
+            // Cek text query
+            final matchQuery = _query.isEmpty ||
                 e.title.toLowerCase().contains(_query.toLowerCase()) ||
                 e.location.toLowerCase().contains(_query.toLowerCase());
-            return matchQuery;
+
+            // Cek Kategori
+            bool matchCategory = true;
+            if (_selectedCategory != 'Semua') {
+              int catId = 0;
+              if (_selectedCategory == 'Musik') catId = 1;
+              else if (_selectedCategory == 'Seni') catId = 2;
+              else if (_selectedCategory == 'Teknologi') catId = 3;
+              else if (_selectedCategory == 'Kuliner') catId = 4;
+              
+              matchCategory = e.categoryId == catId;
+            }
+
+            // Gabungkan semua syarat filter
+            return matchQuery && matchCategory;
           }).toList();
 
+          // 3. TAMPILAN JIKA EVENT TIDAK DITEMUKAN
+          if (filtered.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.event_busy,
+                    size: 64,
+                    color: AppTheme.textMuted.withOpacity(0.3),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Tidak ada event yang sesuai\ndengan pencarianmu',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.outfit(
+                      color: AppTheme.textMuted,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          // 4. TAMPILAN LIST HASIL PENCARIAN
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -296,34 +362,35 @@ class _SearchScreenState extends State<SearchScreen> {
                         fontWeight: FontWeight.w800,
                       ),
                     ),
-                    Text(
-                      'Hapus Filter',
-                      style: GoogleFonts.outfit(
-                        color: AppTheme.accentRed,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
+                    GestureDetector(
+                      onTap: () {
+                        // Reset semua filter
+                        _searchController.clear();
+                        setState(() {
+                          _query = '';
+                          _selectedCategory = 'Semua';
+                          _selectedDate = 'Hari Ini';
+                        });
+                      },
+                      child: Text(
+                        'Hapus Filter',
+                        style: GoogleFonts.outfit(
+                          color: AppTheme.accentRed,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
               Expanded(
-                child: filtered.isEmpty
-                    ? Center(
-                        child: Text(
-                          'Tidak ada event ditemukan',
-                          style: GoogleFonts.outfit(
-                            color: AppTheme.textMuted,
-                            fontSize: 14,
-                          ),
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        itemCount: filtered.length,
-                        itemBuilder: (context, i) =>
-                            _SearchResultCard(event: filtered[i]),
-                      ),
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: filtered.length,
+                  itemBuilder: (context, i) =>
+                      _SearchResultCard(event: filtered[i]),
+                ),
               ),
             ],
           );
@@ -370,7 +437,9 @@ class _SearchResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        // TODO: Arahkan ke Detail Screen saat card di klik
+      },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(12),
