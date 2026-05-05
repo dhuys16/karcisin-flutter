@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:karcisin_app/bloc/booking/booking_bloc.dart';
 import 'package:karcisin_app/shared/app_theme.dart';
 import 'package:karcisin_app/utils/date_helper.dart';
 import 'package:karcisin_app/models/response/event_response.dart';
 import 'package:karcisin_app/widgets/map_widget.dart'; // Memanggil MapWidget yang kamu punya
 import 'package:intl/intl.dart';
 import 'package:karcisin_app/screens/shared/booking/booking_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EventDetailScreen extends StatelessWidget {
   final EventResponse event;
@@ -256,7 +258,7 @@ class EventDetailScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
+              Text( 
                 subtitle,
                 style: GoogleFonts.outfit(
                   color: AppTheme.textMuted,
@@ -342,7 +344,10 @@ class EventDetailScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BookingScreen(event: event),
+                    builder: (_) => BlocProvider.value(
+                      value: BlocProvider.of<BookingBloc>(context),
+                      child: BookingScreen(event: event),
+                    ),
                   ),
                 );
               },

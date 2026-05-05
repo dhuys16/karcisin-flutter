@@ -19,6 +19,8 @@ import 'package:karcisin_app/screens/auth/login_screen.dart';
 import 'package:karcisin_app/screens/auth/register_screen.dart';
 import 'package:karcisin_app/shared/app_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:karcisin_app/repositories/booking_repository.dart';
+import 'package:karcisin_app/bloc/booking/booking_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +43,7 @@ class MyApp extends StatelessWidget {
         RepositoryProvider(create: (context) => EventRepository()),
         RepositoryProvider(create: (context) => CategoryRepository()),
         RepositoryProvider(create: (context) => ProfileRepository()),
+        RepositoryProvider(create: (context) => BookingRepository()), 
       ],
       child: MultiBlocProvider(
         providers: [
@@ -59,6 +62,10 @@ class MyApp extends StatelessWidget {
             create: (context) =>
                 ProfileBloc(RepositoryProvider.of<ProfileRepository>(context))
                   ..add(ProfileFetched()),
+          ),
+          BlocProvider(
+            create: (context) =>
+                BookingBloc(RepositoryProvider.of<BookingRepository>(context)),
           ),
         ],
         child: MaterialApp(
