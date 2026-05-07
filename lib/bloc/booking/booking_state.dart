@@ -1,4 +1,5 @@
 import '../../models/response/booking_response.dart';
+import 'package:midtrans_sdk/midtrans_sdk.dart';
 
 abstract class BookingState {}
 
@@ -9,7 +10,7 @@ class BookingWaitingPayment extends BookingState {
   BookingWaitingPayment(this.snapToken);
 }
 class BookingLoaded extends BookingState {
-  final List<Booking> bookings;
+  final List<BookingData> bookings;
   BookingLoaded(this.bookings);
 }
 class BookingFailure extends BookingState {

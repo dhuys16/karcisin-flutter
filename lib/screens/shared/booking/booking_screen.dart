@@ -136,7 +136,21 @@ class _BookingScreenState extends State<BookingScreen> {
                   Text("Rp ${totalPrice.toStringAsFixed(0)}", style: TextStyle(color: primaryColor, fontSize: 20, fontWeight: FontWeight.bold)),
                 ],
               ),
-              BlocBuilder<BookingBloc, BookingState>(
+              BlocConsumer<BookingBloc, BookingState>(
+                listener: (context, state) {
+                  if (state is BookingFailure) {
+                    // Muncul kalau Laravel atau Midtrans error
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+                    );
+                  }
+                  if (state is BookingWaitingPayment) {
+                    // Opsional: Kasih tau user kalau webview mau muncul
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Menghubungkan ke Midtrans...")),
+                    );
+                  }
+                },
                 builder: (context, state) {
                   // Cegah double klik saat sedang proses loading
                   if (state is BookingLoading) {
@@ -154,10 +168,9 @@ class _BookingScreenState extends State<BookingScreen> {
                         // Mengirimkan packageId, quantity, dan totalPrice ke BLoC
                         context.read<BookingBloc>().add(
                           CreateBooking(
-                            packageId: defaultTicketPackageId,
-                            quantity: quantity,
-                            price: totalPrice, 
                             token: authState.token,
+                            packageId: defaultTicketPackageId,
+                            quantity: quantity
                           ),
                         );
                       } else {

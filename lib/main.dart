@@ -18,16 +18,29 @@ import 'package:karcisin_app/screens/splash_screen.dart';
 import 'package:karcisin_app/screens/auth/login_screen.dart';
 import 'package:karcisin_app/screens/auth/register_screen.dart';
 import 'package:karcisin_app/shared/app_theme.dart';
+import 'package:midtrans_sdk/midtrans_sdk.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:karcisin_app/repositories/booking_repository.dart';
 import 'package:karcisin_app/bloc/booking/booking_bloc.dart';
 
+MidtransSDK? midtransGlobal;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.clear();
-  print("Data SharedPreferences berhasil dihapus paksa!");
+  // final prefs = await SharedPreferences.getInstance();
+  // await prefs.clear();
+  // print("Data SharedPreferences berhasil dihapus paksa!");
+
+  MidtransSDK.init(
+    config: MidtransConfig(
+      clientKey: 'Mid-client-gx007YpTSxC-QiY3',
+      merchantBaseUrl: 'https://demo-merchant-server.herokuapp.com/',
+    ),
+  ).then((value) {
+    midtransGlobal = value; // Simpan objek hasil init ke variabel global
+    print("Midtrans Siap!");
+  });
 
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
